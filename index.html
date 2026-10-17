@@ -90,20 +90,17 @@
       var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       document.documentElement.classList.add('js');
 
-      function clamp(n) { return Math.max(0, Math.min(1, n)); }
+      // A small scroll flips the slide; CSS handles the smooth transition.
+      // Two thresholds (hysteresis) stop it flickering near the switch point.
+      var showing = 1;
 
       function update() {
         var rect = story.getBoundingClientRect();
         var total = story.offsetHeight - window.innerHeight;
-        var p = clamp(-rect.top / total);
-        var a = reduce ? (p < 0.5 ? 1 : 0) : clamp(1 - (p - 0.25) / 0.2);
-        var b = reduce ? (p < 0.5 ? 0 : 1) : clamp((p - 0.5) / 0.2);
-        one.style.opacity = a;
-        one.style.transform = 'translateY(' + (-(1 - a) * 28) + 'px)';
-        one.style.pointerEvents = a < 0.5 ? 'none' : 'auto';
-        two.style.opacity = b;
-        two.style.transform = 'translateY(' + ((1 - b) * 28) + 'px)';
-        two.style.pointerEvents = b < 0.5 ? 'none' : 'auto';
+        var p = Math.max(0, Math.min(1, -rect.top / total));
+        if (showing === 1 && p > 0.3) showing = 2;
+        else if (showing === 2 && p < 0.15) showing = 1;
+        story.classList.toggle('is-two', showing === 2);
       }
 
       window.addEventListener('scroll', update, { passive: true });

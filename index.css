@@ -31,7 +31,7 @@ img { display: block; max-width: 100%; height: auto; }
 .wrap { width: min(1120px, 100% - 48px); margin-inline: auto; }
 
 /* ---------- Story (navy) ---------- */
-.story { height: 220vh; background: var(--navy); color: var(--cream); }
+.story { height: 160vh; background: var(--navy); color: var(--cream); }
 
 .stage {
   position: sticky;
@@ -49,8 +49,14 @@ img { display: block; max-width: 100%; height: auto; }
 .stage__art img { width: min(100%, 560px, 75vh); }
 
 .stage__text { position: relative; min-height: 22rem; }
-.slide { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; will-change: opacity, transform; }
-.slide--two { opacity: 0; }
+.slide {
+  position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center;
+  transition: opacity 0.6s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.slide--one { opacity: 1; transform: none; }
+.slide--two { opacity: 0; transform: translateY(28px); pointer-events: none; }
+.story.is-two .slide--one { opacity: 0; transform: translateY(-28px); pointer-events: none; }
+.story.is-two .slide--two { opacity: 1; transform: none; pointer-events: auto; }
 
 .eyebrow {
   font-family: var(--mono);
@@ -95,7 +101,7 @@ html:not(.js) .story { height: auto; }
 html:not(.js) .stage { position: static; height: auto; padding: 4rem 0; }
 html:not(.js) .stage__text { min-height: 0; }
 html:not(.js) .slide { position: static; margin-bottom: 3rem; }
-html:not(.js) .slide--two { opacity: 1; }
+html:not(.js) .slide--two { opacity: 1; transform: none; pointer-events: auto; }
 
 /* ---------- Projects (light) ---------- */
 .projects { background: var(--paper); padding: clamp(72px, 12vw, 140px) 0; }
@@ -165,5 +171,5 @@ html:not(.js) .slide--two { opacity: 1; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .card, .btn { transition: none; }
+  .card, .btn, .slide { transition: none; }
 }
